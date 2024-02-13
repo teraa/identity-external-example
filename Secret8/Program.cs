@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Secret8;
+using Secret8.Migrations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,7 +10,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlite("Data Source=data.db", ctxOptions =>
+    {
+        ctxOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+    });
+});
+builder.Services.AddAsyncInitializer<MigrationInitializer>();
+
 var app = builder.Build();
+await app.InitAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
