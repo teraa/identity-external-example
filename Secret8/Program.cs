@@ -19,6 +19,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 builder.Services.AddAsyncInitializer<MigrationInitializer>();
 
+builder.Services.AddIdentityApiEndpoints<AppUser>(options =>
+    {
+        options.Password = new PasswordOptions()
+        {
+            RequireDigit = false,
+            RequiredLength = 8,
+            RequiredUniqueChars = 4,
+            RequireLowercase = false,
+            RequireNonAlphanumeric = false,
+            RequireUppercase = false,
+        };
+    })
+    .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 await app.InitAsync();
 
@@ -28,6 +45,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapGroup("/identity").MapIdentityApi<AppUser>();
 
 var summaries = new[]
 {
