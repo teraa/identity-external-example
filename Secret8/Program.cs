@@ -6,6 +6,12 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseDefaultServiceProvider(options =>
+{
+    options.ValidateOnBuild = true;
+    options.ValidateScopes = true;
+});
+
 builder.Host.UseSerilog((hostContext, options) =>
 {
     options.ReadFrom.Configuration(hostContext.Configuration);
