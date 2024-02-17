@@ -28,6 +28,19 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 
+builder.Services.AddAuthentication()
+    .AddDiscord(options =>
+    {
+        var section = builder.Configuration.GetRequiredSection("Discord");
+        options.ClientId = section["ClientId"]!;
+        options.ClientSecret = section["ClientSecret"]!;
+
+        options.CorrelationCookie.SameSite = SameSiteMode.Unspecified;
+        options.CorrelationCookie.Name = "Correlation.";
+
+        options.SaveTokens = true;
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
