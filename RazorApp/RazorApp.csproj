@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-RazorApp-4dd12966-ae52-42c3-beb4-e4adcca7e56b</UserSecretsId>
+    <UserSecretsId>bf4adbee-7476-4687-98bc-9f3a4246eff6</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
