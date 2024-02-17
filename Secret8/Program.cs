@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Secret8;
@@ -44,10 +46,33 @@ builder.Services.AddIdentityApiEndpoints<AppUser>(options =>
             RequireNonAlphanumeric = false,
             RequireUppercase = false,
         };
+        
+        // options.SignIn.RequireConfirmedAccount = true;
     })
     .AddEntityFrameworkStores<AppDbContext>();
 
+builder.Services.AddAuthentication(options =>
+    {
+        // options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    })
+    // .AddCookie(options =>
+    // {
+    //     options.Cookie.Name = "Discord";
+    // })
+    .AddDiscord(options =>
+    {
+        var section = builder.Configuration.GetRequiredSection("Discord");
+        options.ClientId = section["ClientId"]!;
+        options.ClientSecret = section["ClientSecret"]!;
+
+        options.CorrelationCookie.SameSite = SameSiteMode.Unspecified;
+        options.CorrelationCookie.Name = "Correlation.";
+
+        options.SaveTokens = true;
+    });
+
 builder.Services.AddAuthorization();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 await app.InitAsync();
@@ -64,5 +89,7 @@ app.UseAuthorization();
 
 app.MapGroup("/identity").MapIdentityApi<AppUser>();
 app.MapGet("/", () => $"Hello: {Random.Shared.Next(100)}");
+app.MapGet("/secure", () => "Secure.").RequireAuthorization();
+app.MapControllers();
 
 app.Run();
