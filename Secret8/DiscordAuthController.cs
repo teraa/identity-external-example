@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Secret8;
 
@@ -16,14 +15,12 @@ public sealed class DiscordAuthController : ControllerBase
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly ILogger<DiscordAuthController> _logger;
-    private readonly AppDbContext _ctx;
 
-    public DiscordAuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ILogger<DiscordAuthController> logger, AppDbContext ctx)
+    public DiscordAuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ILogger<DiscordAuthController> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _logger = logger;
-        _ctx = ctx;
     }
 
     [HttpGet("[action]")]
@@ -39,7 +36,10 @@ public sealed class DiscordAuthController : ControllerBase
         await HttpContext.ChallengeAsync(DiscordAuthenticationDefaults.AuthenticationScheme, properties);
     }
 
-    [Authorize]
+    // Both Identity.External and Discord schemes will work here,
+    // but Discord will redirect to discord.com and External will redirect to /Account/Login...
+    // when request is unauthenticated
+    [Authorize(AuthenticationSchemes = DiscordAuthenticationDefaults.AuthenticationScheme)]
     [HttpGet("[action]")]
     public async Task<IActionResult> Continue()
     {
@@ -80,6 +80,12 @@ public sealed class DiscordAuthController : ControllerBase
             new Claim("discord.id", discordId.Value),
             new Claim("discord.name", discordUserName)
         ]);
+
+        if (!identityResult.Succeeded)
+        {
+            _logger.LogWarning("Failed to add user claims: {Errors}", identityResult.Errors.Select(x => x.Description));
+            return BadRequest();
+        }
         
         identityResult = await _userManager.AddLoginAsync(user, info);
         if (!identityResult.Succeeded)
@@ -122,16 +128,5 @@ public sealed class DiscordAuthController : ControllerBase
                 c.Value
             })
         }));
-    }
-
-    [Authorize]
-    [HttpGet("add")]
-    public async Task<IActionResult> AddClaim(string type, string value)
-    {
-        var claim = new Claim(type, value);
-        var user = await _userManager.GetUserAsync(User);
-        Debug.Assert(user is not null);
-        await _userManager.AddClaimAsync(user, claim);
-        return Ok($"Added: {type} = {value}");
     }
 }
