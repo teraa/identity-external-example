@@ -1,5 +1,7 @@
+using AspNet.Security.OAuth.Discord;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Secret8;
@@ -46,7 +48,9 @@ builder.Services.AddIdentityApiEndpoints<AppUser>(options =>
             RequireNonAlphanumeric = false,
             RequireUppercase = false,
         };
-        
+
+        options.User.AllowedUserNameCharacters += ":";
+
         // options.SignIn.RequireConfirmedAccount = true;
     })
     .AddEntityFrameworkStores<AppDbContext>();
@@ -54,10 +58,21 @@ builder.Services.AddIdentityApiEndpoints<AppUser>(options =>
 builder.Services.AddAuthentication(options =>
     {
         // options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultScheme = DiscordAuthenticationDefaults.AuthenticationScheme;
+        // options.DefaultSignInScheme = "MyBearer";
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+
+        options.DefaultChallengeScheme = DefaultAuthenticationHandler.SchemeName;
+        options.DefaultForbidScheme = DefaultAuthenticationHandler.SchemeName;
+
+        options.AddScheme<DefaultAuthenticationHandler>(DefaultAuthenticationHandler.SchemeName, null);
     })
-    // .AddCookie(options =>
+    // .AddCookie("MyCookie", options =>
     // {
     //     options.Cookie.Name = "Discord";
+    // })
+    // .AddBearerToken("MyBearer", options =>
+    // {
     // })
     .AddDiscord(options =>
     {
@@ -69,9 +84,19 @@ builder.Services.AddAuthentication(options =>
         options.CorrelationCookie.Name = "Correlation.";
 
         options.SaveTokens = true;
+
+        // options.ForwardAuthenticate = DefaultAuthenticationHandler.SchemeName;
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder(
+            DiscordAuthenticationDefaults.AuthenticationScheme,
+            IdentityConstants.ApplicationScheme,
+            IdentityConstants.ExternalScheme)
+        .RequireAuthenticatedUser()
+        .Build();
+});
 builder.Services.AddControllers();
 
 var app = builder.Build();
