@@ -20,7 +20,7 @@ public sealed class DefaultAuthenticationHandler : IAuthenticationHandler
 
     public Task<AuthenticateResult> AuthenticateAsync()
     {
-        return Task.FromResult(AuthenticateResult.NoResult());
+        throw new NotImplementedException();
     }
 
     public Task ChallengeAsync(AuthenticationProperties? properties)
