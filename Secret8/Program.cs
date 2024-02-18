@@ -37,43 +37,46 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 builder.Services.AddAsyncInitializer<MigrationInitializer>();
 
-builder.Services.AddIdentityApiEndpoints<AppUser>(options =>
+builder.Services
+    .AddAuthentication(IdentityConstants.ApplicationScheme)
+    .AddIdentityCookies();
+
+builder.Services
+    .AddIdentityCore<AppUser>(options =>
     {
-        options.Password = new PasswordOptions()
-        {
-            RequireDigit = false,
-            RequiredLength = 8,
-            RequiredUniqueChars = 4,
-            RequireLowercase = false,
-            RequireNonAlphanumeric = false,
-            RequireUppercase = false,
-        };
-
         options.User.AllowedUserNameCharacters += ":";
-
         // options.SignIn.RequireConfirmedAccount = true;
     })
-    .AddEntityFrameworkStores<AppDbContext>();
+    .AddApiEndpoints()
+    .AddEntityFrameworkStores<AppDbContext>()
+    // .AddUserConfirmation<>()
+    .Services
+    .ConfigureApplicationCookie(options => { options.Cookie.Name = "Auth"; })
+    .ConfigureExternalCookie(options => { options.Cookie.Name = "External"; })
+    ;
+
+// builder.Services.AddIdentityApiEndpoints<AppUser>(options =>
+//     {
+//         options.User.AllowedUserNameCharacters += ":";
+//         // options.SignIn.RequireConfirmedAccount = true;
+//     })
+//     .AddEntityFrameworkStores<AppDbContext>()
+//     // .AddUserConfirmation<>()
+//     .Services
+//     // .Configure<IdentityOptions>(options => { })
+//     .ConfigureApplicationCookie(options => { options.Cookie.Name = "App"; })
+//     .ConfigureExternalCookie(options => { options.Cookie.Name = "External"; })
+//     ;
 
 builder.Services.AddAuthentication(options =>
     {
         // options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultScheme = DiscordAuthenticationDefaults.AuthenticationScheme;
-        // options.DefaultSignInScheme = "MyBearer";
+        // options.DefaultScheme = DiscordAuthenticationDefaults.AuthenticationScheme;
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-
         options.DefaultChallengeScheme = DefaultAuthenticationHandler.SchemeName;
         options.DefaultForbidScheme = DefaultAuthenticationHandler.SchemeName;
-
         options.AddScheme<DefaultAuthenticationHandler>(DefaultAuthenticationHandler.SchemeName, null);
     })
-    // .AddCookie("MyCookie", options =>
-    // {
-    //     options.Cookie.Name = "Discord";
-    // })
-    // .AddBearerToken("MyBearer", options =>
-    // {
-    // })
     .AddDiscord(options =>
     {
         var section = builder.Configuration.GetRequiredSection("Discord");
@@ -83,19 +86,26 @@ builder.Services.AddAuthentication(options =>
         options.CorrelationCookie.SameSite = SameSiteMode.Unspecified;
         options.CorrelationCookie.Name = "Correlation.";
 
-        options.SaveTokens = true;
-
-        // options.ForwardAuthenticate = DefaultAuthenticationHandler.SchemeName;
+        // options.SaveTokens = true;
     });
 
 builder.Services.AddAuthorization(options =>
 {
-    options.DefaultPolicy = new AuthorizationPolicyBuilder(
-            DiscordAuthenticationDefaults.AuthenticationScheme,
-            IdentityConstants.ApplicationScheme,
-            IdentityConstants.ExternalScheme)
-        .RequireAuthenticatedUser()
-        .Build();
+    // options.DefaultPolicy = new AuthorizationPolicyBuilder(
+    //         DiscordAuthenticationDefaults.AuthenticationScheme,
+    //         IdentityConstants.ApplicationScheme,
+    //         IdentityConstants.ExternalScheme)
+    //     .RequireAuthenticatedUser()
+    //     .Build();
+    // options.AddPolicy(
+    //     "ExternalCallback",
+    //     new AuthorizationPolicyBuilder
+    //         (
+    //             DiscordAuthenticationDefaults.AuthenticationScheme
+    //             // IdentityConstants.ExternalScheme
+    //         )
+    //         .RequireAuthenticatedUser()
+    //         .Build());
 });
 builder.Services.AddControllers();
 
@@ -112,7 +122,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGroup("/identity").MapIdentityApi<AppUser>();
+// app.MapGroup("/identity").MapIdentityApi<AppUser>();
 app.MapGet("/", () => $"Hello: {Random.Shared.Next(100)}");
 app.MapGet("/secure", () => "Secure.").RequireAuthorization();
 app.MapControllers();
