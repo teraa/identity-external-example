@@ -9,14 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace Secret8;
 
 [ApiController]
-[Route("auth")]
-public sealed class DiscordAuthController : ControllerBase
+[Route("[controller]")]
+public sealed class AuthController : ControllerBase
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly ILogger<DiscordAuthController> _logger;
+    private readonly ILogger<AuthController> _logger;
 
-    public DiscordAuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ILogger<DiscordAuthController> logger)
+    public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ILogger<AuthController> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
