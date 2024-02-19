@@ -111,7 +111,7 @@ public sealed class DiscordAuthController : ControllerBase
     [HttpPost("[action]")]
     public async Task Logout()
     {
-        // TODO: This just deletes the cookie client side, it's still valid
+        // This just deletes the cookie client side, but it's still valid
         await HttpContext.SignOutAsync(); // Cookie scheme
     }
 
