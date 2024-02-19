@@ -31,7 +31,7 @@ public sealed class AuthController : ControllerBase
         
         var properties = _signInManager.ConfigureExternalAuthenticationProperties(
             "Discord",
-            "/auth/Continue");
+            "Auth/Continue");
         
         await HttpContext.ChallengeAsync(DiscordAuthenticationDefaults.AuthenticationScheme, properties);
     }
@@ -44,7 +44,11 @@ public sealed class AuthController : ControllerBase
     public async Task<IActionResult> Continue()
     {
         var info = await _signInManager.GetExternalLoginInfoAsync();
-        Debug.Assert(info is not null);
+        if (info is null)
+        {
+            _logger.LogWarning("Couldn't load external login information");
+            return BadRequest();
+        }
         
         var result = await _signInManager.ExternalLoginSignInAsync(
             info.LoginProvider,
@@ -54,6 +58,7 @@ public sealed class AuthController : ControllerBase
 
         if (result.Succeeded)
         {
+            _logger.LogInformation("User {ProviderKey} logged in with {LoginProvider}", info.ProviderKey, info.LoginProvider);
             return Ok(new {Message = "Existing account"});
         }
 
@@ -63,7 +68,6 @@ public sealed class AuthController : ControllerBase
         }
 
         var user = new AppUser();
-
         var discordUserName = User.Identity!.Name!;
         var discordId = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
         await _userManager.SetUserNameAsync(user, $"{discordUserName}:{discordId.Value}");
@@ -102,6 +106,7 @@ public sealed class AuthController : ControllerBase
 
         if (result.Succeeded)
         {
+            _logger.LogInformation("User {ProviderKey} created an account with {LoginProvider}", info.ProviderKey, info.LoginProvider);
             return Ok(new {Message = "New account"});
         }
 
@@ -116,7 +121,7 @@ public sealed class AuthController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("info")]
+    [HttpGet("[action]")]
     public IActionResult Info()
     {
         return Ok(User.Identities.Select(i => new
