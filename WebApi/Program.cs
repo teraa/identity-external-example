@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Secret8;
-using Secret8.Migrations;
+using WebApi;
+using WebApi.Migrations;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

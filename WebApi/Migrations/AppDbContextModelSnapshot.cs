@@ -2,20 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Secret8;
+using WebApi;
 
 #nullable disable
 
-namespace Secret8.Migrations
+namespace WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240213134458_Init")]
-    partial class Init
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -46,9 +43,9 @@ namespace Secret8.Migrations
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
+                        .HasDatabaseName("ix_asp_net_roles_normalized_name");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("asp_net_roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -77,7 +74,7 @@ namespace Secret8.Migrations
                     b.HasIndex("RoleId")
                         .HasDatabaseName("ix_asp_net_role_claims_role_id");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("asp_net_role_claims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -106,7 +103,7 @@ namespace Secret8.Migrations
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_asp_net_user_claims_user_id");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("asp_net_user_claims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -134,7 +131,7 @@ namespace Secret8.Migrations
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_asp_net_user_logins_user_id");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("asp_net_user_logins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -153,7 +150,7 @@ namespace Secret8.Migrations
                     b.HasIndex("RoleId")
                         .HasDatabaseName("ix_asp_net_user_roles_role_id");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("asp_net_user_roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -177,10 +174,10 @@ namespace Secret8.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name")
                         .HasName("pk_asp_net_user_tokens");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("asp_net_user_tokens", (string)null);
                 });
 
-            modelBuilder.Entity("Secret8.AppUser", b =>
+            modelBuilder.Entity("WebApi.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT")
@@ -251,13 +248,13 @@ namespace Secret8.Migrations
                         .HasName("pk_asp_net_users");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
+                        .HasDatabaseName("ix_asp_net_users_normalized_email");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
+                        .HasDatabaseName("ix_asp_net_users_normalized_user_name");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("asp_net_users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -272,7 +269,7 @@ namespace Secret8.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Secret8.AppUser", null)
+                    b.HasOne("WebApi.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -282,7 +279,7 @@ namespace Secret8.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Secret8.AppUser", null)
+                    b.HasOne("WebApi.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -299,7 +296,7 @@ namespace Secret8.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id");
 
-                    b.HasOne("Secret8.AppUser", null)
+                    b.HasOne("WebApi.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -309,7 +306,7 @@ namespace Secret8.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Secret8.AppUser", null)
+                    b.HasOne("WebApi.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

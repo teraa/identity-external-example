@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # 
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Secret8", "Secret8\Secret8.csproj", "{573C467C-6C67-4754-8F79-665BA5F5EDAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{573C467C-6C67-4754-8F79-665BA5F5EDAB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorApp", "RazorApp\RazorApp.csproj", "{DE024185-9E4D-44B9-9070-8816FBB1A649}"
 EndProject

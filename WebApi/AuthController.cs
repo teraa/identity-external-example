@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Secret8;
+namespace WebApi;
 
 [ApiController]
 [Route("[controller]")]

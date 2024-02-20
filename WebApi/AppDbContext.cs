@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Secret8;
+namespace WebApi;
 
 public sealed class AppDbContext : IdentityDbContext<AppUser>
 {

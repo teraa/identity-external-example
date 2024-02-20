@@ -1,7 +1,7 @@
 ﻿using Extensions.Hosting.AsyncInitialization;
 using Microsoft.EntityFrameworkCore;
 
-namespace Secret8.Migrations;
+namespace WebApi.Migrations;
 
 public sealed class MigrationInitializer : IAsyncInitializer
 {

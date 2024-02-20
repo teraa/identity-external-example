@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 
-namespace Secret8;
+namespace WebApi;
 
 public sealed class DefaultAuthenticationHandler : IAuthenticationHandler
 {

@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Secret8;
+using WebApi;
 
 #nullable disable
 
-namespace Secret8.Migrations
+namespace WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240214190355_SnakeAspNet")]
+    partial class SnakeAspNet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -177,7 +180,7 @@ namespace Secret8.Migrations
                     b.ToTable("asp_net_user_tokens", (string)null);
                 });
 
-            modelBuilder.Entity("Secret8.AppUser", b =>
+            modelBuilder.Entity("WebApi.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT")
@@ -269,7 +272,7 @@ namespace Secret8.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Secret8.AppUser", null)
+                    b.HasOne("WebApi.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -279,7 +282,7 @@ namespace Secret8.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Secret8.AppUser", null)
+                    b.HasOne("WebApi.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -296,7 +299,7 @@ namespace Secret8.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id");
 
-                    b.HasOne("Secret8.AppUser", null)
+                    b.HasOne("WebApi.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -306,7 +309,7 @@ namespace Secret8.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Secret8.AppUser", null)
+                    b.HasOne("WebApi.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
