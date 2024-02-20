@@ -25,9 +25,6 @@ public sealed class AuthController : ControllerBase
     [HttpGet("[action]")]
     public async Task Login()
     {
-        // Clear the existing external cookie to ensure a clean login process
-        // await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-        
         var properties = _signInManager.ConfigureExternalAuthenticationProperties(
             "Discord",
             "Auth/Continue");
@@ -35,9 +32,6 @@ public sealed class AuthController : ControllerBase
         await HttpContext.ChallengeAsync(DiscordAuthenticationDefaults.AuthenticationScheme, properties);
     }
 
-    // Both Identity.External and Discord schemes will work here,
-    // but Discord will redirect to discord.com and External will redirect to /Account/Login...
-    // when request is unauthenticated
     [Authorize(AuthenticationSchemes = DiscordAuthenticationDefaults.AuthenticationScheme)]
     [HttpGet("[action]")]
     public async Task<IActionResult> Continue()
@@ -117,7 +111,6 @@ public sealed class AuthController : ControllerBase
     [HttpPost("[action]")]
     public async Task Logout()
     {
-        // This just deletes the cookie client side, but it's still valid
         await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
     }
 

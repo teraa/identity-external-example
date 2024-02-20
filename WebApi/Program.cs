@@ -35,10 +35,8 @@ builder.Services
     .AddIdentity<AppUser, IdentityRole>(options =>
     {
         options.User.AllowedUserNameCharacters += ":";
-        // options.SignIn.RequireConfirmedAccount = true;
     })
     .AddEntityFrameworkStores<AppDbContext>()
-    // .AddUserConfirmation<>()
     .Services
     .ConfigureApplicationCookie(options => { options.Cookie.Name = "Auth"; })
     .ConfigureExternalCookie(options => { options.Cookie.Name = "External"; })
@@ -59,9 +57,6 @@ builder.Services
 
         options.CorrelationCookie.SameSite = SameSiteMode.Unspecified;
         options.CorrelationCookie.Name = "Correlation.";
-
-        // options.SaveTokens = true;
-        // options.SignInScheme = IdentityConstants.ApplicationScheme;
     });
 
 builder.Services.AddAuthorization();
