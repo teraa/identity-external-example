@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Security.Claims;
 using AspNet.Security.OAuth.Discord;
 using Microsoft.AspNetCore.Authentication;
@@ -50,27 +49,29 @@ public sealed class AuthController : ControllerBase
             return BadRequest();
         }
         
-        var result = await _signInManager.ExternalLoginSignInAsync(
+        var signInResult = await _signInManager.ExternalLoginSignInAsync(
             info.LoginProvider,
             info.ProviderKey,
             isPersistent: true,
             bypassTwoFactor: true);
-
-        if (result.Succeeded)
+        
+        // Existing user
+        if (signInResult.Succeeded)
         {
             _logger.LogInformation("User {ProviderKey} logged in with {LoginProvider}", info.ProviderKey, info.LoginProvider);
-            return Ok(new {Message = "Existing account"});
+            return Redirect("/");
         }
 
-        if (result.IsLockedOut)
+        if (signInResult.IsLockedOut)
         {
             return Forbid();
         }
 
+        // New user
         var user = new AppUser();
         var discordUserName = User.Identity!.Name!;
         var discordId = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
-        await _userManager.SetUserNameAsync(user, $"{discordUserName}:{discordId.Value}");
+        await _userManager.SetUserNameAsync(user, $"{discordUserName}:{discordId.Value}"); // Whatever, not important
         
         var identityResult = await _userManager.CreateAsync(user);
         if (!identityResult.Succeeded)
@@ -98,19 +99,19 @@ public sealed class AuthController : ControllerBase
             return BadRequest();
         }
 
-        result = await _signInManager.ExternalLoginSignInAsync(
+        signInResult = await _signInManager.ExternalLoginSignInAsync(
             info.LoginProvider,
             info.ProviderKey,
             isPersistent: true,
             bypassTwoFactor: true);
 
-        if (result.Succeeded)
+        if (signInResult.Succeeded)
         {
             _logger.LogInformation("User {ProviderKey} created an account with {LoginProvider}", info.ProviderKey, info.LoginProvider);
-            return Ok(new {Message = "New account"});
+            return Redirect("/");
         }
 
-        return BadRequest(result);
+        return BadRequest(signInResult);
     }
 
     [HttpPost("[action]")]
