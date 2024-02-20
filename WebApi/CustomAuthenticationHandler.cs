@@ -2,9 +2,9 @@
 
 namespace WebApi;
 
-public sealed class DefaultAuthenticationHandler : IAuthenticationHandler
+public sealed class CustomAuthenticationHandler : IAuthenticationHandler
 {
-    public const string SchemeName = nameof(DefaultAuthenticationHandler);
+    public const string SchemeName = nameof(CustomAuthenticationHandler);
     
     private AuthenticationScheme Scheme { get; set; } = default!;
     private HttpContext Context { get; set; } = default!;

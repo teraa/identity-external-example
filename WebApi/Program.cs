@@ -49,9 +49,9 @@ builder.Services
 builder.Services
     .AddAuthentication(options =>
     {
-        options.DefaultChallengeScheme = DefaultAuthenticationHandler.SchemeName;
-        options.DefaultForbidScheme = DefaultAuthenticationHandler.SchemeName;
-        options.AddScheme<DefaultAuthenticationHandler>(DefaultAuthenticationHandler.SchemeName, null);
+        options.DefaultChallengeScheme = CustomAuthenticationHandler.SchemeName;
+        options.DefaultForbidScheme = CustomAuthenticationHandler.SchemeName;
+        options.AddScheme<CustomAuthenticationHandler>(CustomAuthenticationHandler.SchemeName, null);
     })
     .AddDiscord(options =>
     {
