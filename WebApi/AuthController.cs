@@ -118,7 +118,7 @@ public sealed class AuthController : ControllerBase
     public async Task Logout()
     {
         // This just deletes the cookie client side, but it's still valid
-        await HttpContext.SignOutAsync(); // Cookie scheme
+        await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
     }
 
     [Authorize]
